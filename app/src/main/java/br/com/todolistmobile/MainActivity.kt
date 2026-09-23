@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -36,20 +37,36 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+data class Task (
+    val id: Long,
+    val name: String,
+    val isCompleted: Boolean = false
+)
+
 @Composable
 fun ToDoList() {
 
     var task by remember { mutableStateOf(value = "") }
+    var tasks by remember {mutableStateOf(value = listOf<Task>())}
 
     fun addTask() {
-
+        if (task.isEmpty()) {
+            return
+        }
+        else {
+            tasks + Task(id = tasks.size.toLong(), name = task)
+            task = ""
+        }
     }
 
-    fun completeTask() {
-
+    fun completeTask(
+        item: Task,
+        checked: Boolean
+    ) {
+        tasks = tasks.map { if (it.id == item.id) it.copy(isCompleted = checked) else it }
     }
 
-    fun clearTasks() {
+    fun clearFinishedTasks() {
 
     }
 
@@ -62,16 +79,18 @@ fun ToDoList() {
 
         OutlinedTextField(
             value = task,
-            onValueChange = { v -> task = v.filter { it.isDigit() || it.isLetter()} },
+            onValueChange = { v -> task = v.filter { it.isDigit() || it.isLetter() || it.isWhitespace()} },
             label = { Text(text = "Type a task") },
             trailingIcon = {
-                IconButton(onClick = {addTask()}) {
+                Button(onClick = {addTask()}) {
                     Text(text = "Add")
                 }
             },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Text(text = "test")
     }
 }
 
