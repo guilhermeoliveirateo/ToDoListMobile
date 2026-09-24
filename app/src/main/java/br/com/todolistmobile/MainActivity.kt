@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,14 +48,16 @@ fun ToDoList() {
 
     var task by remember { mutableStateOf(value = "") }
     var tasks by remember {mutableStateOf(value = listOf<Task>())}
+    var nextId by remember { mutableLongStateOf(value = 0L) }
 
     fun addTask() {
         if (task.isEmpty()) {
             return
         }
         else {
-            tasks + Task(id = tasks.size.toLong(), name = task)
+            tasks = tasks + Task(id = nextId, name = task)
             task = ""
+            nextId++
         }
     }
 
@@ -67,7 +69,7 @@ fun ToDoList() {
     }
 
     fun clearFinishedTasks() {
-
+        tasks = tasks.filter { !it.isCompleted }
     }
 
     Column (
@@ -89,8 +91,6 @@ fun ToDoList() {
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        Text(text = "test")
     }
 }
 
